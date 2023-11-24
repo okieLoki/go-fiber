@@ -2,18 +2,17 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/okieLoki/go-fiber/database"
+	"github.com/okieLoki/go-fiber/routes"
 )
 
 func main() {
 
+	database.ConnectDb()
+
 	app := fiber.New()
 
-	app.Get("/api", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{
-			"message": "Hello, World!",
-			"status":  "success",
-		})
-	})
+	routes.SetupRoutes(app)
 
 	app.Listen(":3000")
 }
