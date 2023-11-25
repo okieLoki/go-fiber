@@ -41,3 +41,43 @@ func CreateUser(c *fiber.Ctx) error {
 		"data":    user,
 	})
 }
+
+func GetUsers(c *fiber.Ctx) error {
+	var users []models.User
+
+	database.Database.Db.Find(&users)
+
+	if len(users) == 0 {
+		return &fiber.Error{
+			Code:    fiber.ErrNotFound.Code,
+			Message: "No users found",
+		}
+	}
+
+	return c.Status(200).JSON(fiber.Map{
+		"status": "success",
+		"data":   users,
+	})
+}
+
+func DeleteUser(c *fiber.Ctx) error {
+	var user models.User
+
+	id := c.Params("id")
+
+	database.Database.Db.First(&user, id)
+
+	if user.ID == 0 {
+		return &fiber.Error{
+			Code:    fiber.ErrNotFound.Code,
+			Message: "User not found",
+		}
+	}
+
+	database.Database.Db.Delete(&user)
+
+	return c.Status(200).JSON(fiber.Map{
+		"message": "Deleted user",
+		"status":  "success",
+	})
+}
